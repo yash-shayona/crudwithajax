@@ -13,7 +13,7 @@ class ProductController extends Controller
         $limit = 5;
         $resp_data['limit'] = $limit;
         $resp_data['page'] = 1;
-        $count = Product::all()->where('status',1);
+        $count = Product::all()->where('status', 1);
         $product = Product::with('category')
             ->offset(0)
             ->limit(5)
@@ -49,9 +49,9 @@ class ProductController extends Controller
         // dd($array);
         $table = Product::insert($array);
         if ($table) {
-            return redirect('/product')->with(['success' => 'record inserted successfully']);
+            return redirect('/product')->with(['success' => 'Record Inserted Successfully']);
         } else {
-            return redirect('/product')->with(['error' => 'record inserted failed']);
+            return redirect('/product')->with(['error' => 'Record Inserted Failed']);
         }
     }
 
@@ -68,21 +68,21 @@ class ProductController extends Controller
         $resp_data['category'] = $category;
         return view('Product.product-add', $resp_data);
     }
-    public function editajax(Request $req)
-    {
-        $id = $req->id;
-        $url = url('/product/update/' . $id);
-        // $id = decrypt($id);
-        $product = Product::where('id', $id)->get()->toArray();
-        // dd($product);
-        $category = Category::select('category_id', 'category_name')->get()->toArray();
-        // $resp_data['url'] = $url;
-        // $resp_data['page'] = $page;
-        // $resp_data['product'] = $product;
-        // $resp_data['category'] = $category;
-        // return view('Product.product-add',['product'=> $product,'category'=> $category,'url'=>$url]);
-        return response()->json(['url' => $url, 'product' => $product, 'category' => $category]);
-    }
+    // public function editajax(Request $req)
+    // {
+    //     $id = $req->id;
+    //     $url = url('/product/update/' . $id);
+    //     // $id = decrypt($id);
+    //     $product = Product::where('id', $id)->get()->toArray();
+    //     // dd($product);
+    //     $category = Category::select('category_id', 'category_name')->get()->toArray();
+    //     // $resp_data['url'] = $url;
+    //     // $resp_data['page'] = $page;
+    //     // $resp_data['product'] = $product;
+    //     // $resp_data['category'] = $category;
+    //     // return view('Product.product-add',['product'=> $product,'category'=> $category,'url'=>$url]);
+    //     return response()->json(['url' => $url, 'product' => $product, 'category' => $category]);
+    // }
 
     public function update($page, Request $req, $id)
     {
@@ -94,9 +94,9 @@ class ProductController extends Controller
         $array['updated_at'] = date('Y-m-d H:i:s');
         $table = Product::where('id', $id)->update($array);
         if ($table) {
-            return redirect('/product/page/' . $page)->with(['success' => 'record updated successfully']);
+            return redirect('/product/page/' . $page)->with(['success' => 'Record Updated Successfully']);
         } else {
-            return redirect('/product/page/' . $page)->with(['error' => 'record updated failed']);
+            return redirect('/product/page/' . $page)->with(['error' => 'Record Updated Failed']);
         }
     }
     public function updateajax(Request $req)
@@ -109,15 +109,15 @@ class ProductController extends Controller
         // $array['updated_at'] = date('Y-m-d H:i:s');
         // $table = Product::where('id', $id)->update($array);
         // if ($table) {
-        // return redirect('/product/page/' . $page)->with(['success' => 'record updated successfully']);
+        // return redirect('/product/page/' . $page)->with(['success' => 'Record Updated Successfully']);
         // } else {
-        // return redirect('/product/page/' . $page)->with(['error' => 'record updated failed']);
+        // return redirect('/product/page/' . $page)->with(['error' => 'Record Updated Failed']);
         // }
         $id = $req->id;
         $url = url('/product/update/' . $id);
         $product = Product::where('id', $id)->get()->toArray();
         $category = Category::select('category_id', 'category_name')->get()->toArray();
-        return view('Product.product-editview',['product'=> $product,'category'=> $category,'url'=>$url]);
+        return view('Product.product-editview', ['product' => $product, 'category' => $category, 'url' => $url]);
     }
 
     public function delete($page, $id)
@@ -162,7 +162,8 @@ class ProductController extends Controller
         return response()->json(['url' => $url, 'product' => $product, 'category' => $category]);
     }
 
-    public function updatepost(Request $req){
+    public function updatepost(Request $req)
+    {
         // $url= url('/product');
         $id = $req->id;
         $array = $req->all();
@@ -171,14 +172,14 @@ class ProductController extends Controller
         $array['updated_at'] = date('Y-m-d H:i:s');
         $table = Product::where('id', $id)->update($array);
         if ($table) {
-            return response()->json(['message' => 'record updated successfully']);
+            return response()->json(['message' => 'Record Updated Successfully']);
         } else {
-            return response()->json(['message' => 'record updated failed']);
+            return response()->json(['message' => 'Record Updated Failed']);
         }
-
     }
 
-    public function deleteajax(Request $req){
+    public function deleteajax(Request $req)
+    {
         $id = $req->id;
         $table = Product::where('id', $id)->update(['status' => 0]);
         if ($table) {
@@ -186,5 +187,46 @@ class ProductController extends Controller
         } else {
             return response()->json(['message' => 'Record Deleted Failed']);
         }
+    }
+
+    public function productajax()
+    {
+        return view('Product.product-list-ajax');
+    }
+
+    public function getproduct()
+    {
+        $product = Product::with('category')
+            ->where('status', 1)
+            ->get()
+            ->toArray();
+        return response()->json(['product'=>$product]);
+    }
+
+    public function addajax(){
+        $category = Category::select('category_id', 'category_name')->get()->toArray();
+        return view('Product.product-add-ajax',['category'=>$category]);
+    }
+
+    public function storeajax(Request $req){
+        $array = $req->all();
+        unset($array["_token"]);
+        $array['status'] = 1;
+        $array['created_at'] = date('Y-m-d H:i:s');
+        // dd($array);
+        $table = Product::insert($array);
+        if ($table) {
+            return response()->json(['message' => 'Record Inserted Successfully']);
+        } else {
+            return response()->json(['message' => 'Record Inserted Failed']);
+        }
+    }
+
+    public function editajax(Request $req)
+    {
+        $id = $req->id;
+        $product = Product::where('id', $id)->get()->toArray();
+        $category = Category::select('category_id', 'category_name')->get()->toArray();
+        return view('Product.product-update-ajax',['category'=>$category,'product'=>$product,'id'=>$id]);
     }
 }
