@@ -87,7 +87,8 @@
                 success: function(response) {
                     $('.message').text(response.message);
                     // console.log(response);
-                    window.location.href;
+                    // window.location.href;
+                    window.open('/product','_SELF');
                 },
                 error:function(e){
                     $('.message').text(e.responseText);

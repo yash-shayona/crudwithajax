@@ -1,5 +1,5 @@
 @include('header')
-
+<div class="message"></div>
 <main>
 
     @if(session()->has('success'))
@@ -38,7 +38,8 @@
                     <td><?php echo $p['prod_desc']; ?></td>
                     <td><?php echo $p['category'][0]['category_name']; ?></td>
                     <td><button class="btn btn-info editbtn" id="{{ $p['id'] }}">Edit</button></td>
-                    <td><a href="{{ url('/product/page/'.$page.'/'.'delete/').'/'.encrypt($p['id']) }}"><button class="btn btn-danger" onclick="confirm('Are You Sure Want To Delete ?')">Delete</button></a></td>
+                    <td><button class="btn btn-danger deletebtn" id="{{ $p['id'] }}">Delete</button></td>
+                    <!-- <td><a href="{{ url('/product/page/'.$page.'/'.'delete/').'/'.encrypt($p['id']) }}"><button class="btn btn-danger" onclick="confirm('Are You Sure Want To Delete ?')">Delete</button></a></td> -->
                 </tr>
             <?php
                 $i++;
@@ -68,7 +69,7 @@
 <script>
     $('.editbtn').click(function() {
         var id=this.id;
-        console.log(id);
+        // console.log(id);
         $.ajax({
             url: '/product/edit'+'/'+id,
             type: 'GET',
@@ -76,6 +77,26 @@
             success: function(response) {
                 window.location.href=response.url;
                 // console.log(response);
+            }
+        });
+    });
+
+    $('.deletebtn').click(function(){
+        var id=this.id;
+        var obj = $(this);
+        // console.log(id);
+        $.ajax({
+            url: '/product/delete'+'/'+id,
+            type: 'GET',
+            data:{id},
+            success: function(response) {
+                $('.message').text(response.message);
+                $(obj).parent().parent().remove();
+                // window.location.href;
+                // console.log(response);
+            },
+            error:function(e){
+                $('.message').text(e.responseText);
             }
         });
     });

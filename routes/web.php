@@ -31,6 +31,7 @@ Route::get('/product/page/{page?}/edit/{id}',[ProductController::class,'edit']);
 // Route::post('/product/update',[ProductController::class,'updateajax']);
 Route::post('/product/page/{page?}/update/{id}',[ProductController::class,'update']);
 Route::get('/product/page/{page?}/delete/{id}',[ProductController::class,'delete']);
+Route::get('/product/delete/{id}',[ProductController::class,'deleteajax']);
 Route::get('/product/page',function(){
     return redirect('/product');
 });

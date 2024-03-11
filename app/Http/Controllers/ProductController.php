@@ -13,7 +13,7 @@ class ProductController extends Controller
         $limit = 5;
         $resp_data['limit'] = $limit;
         $resp_data['page'] = 1;
-        $count = Product::all();
+        $count = Product::all()->where('status',1);
         $product = Product::with('category')
             ->offset(0)
             ->limit(5)
@@ -176,5 +176,15 @@ class ProductController extends Controller
             return response()->json(['message' => 'record updated failed']);
         }
 
+    }
+
+    public function deleteajax(Request $req){
+        $id = $req->id;
+        $table = Product::where('id', $id)->update(['status' => 0]);
+        if ($table) {
+            return response()->json(['message' => 'Record Deleted Successfully']);
+        } else {
+            return response()->json(['message' => 'Record Deleted Failed']);
+        }
     }
 }
