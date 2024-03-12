@@ -35,9 +35,6 @@
 @include('footer')
 <script>
     $(document).ready(function() {
-        sendrequest();
-
-        function sendrequest(){
         $.ajax({
             url: '{{ url("/getproduct") }}',
             type: 'GET',
@@ -58,14 +55,10 @@
                     $('.ajax-prod-table').append(`<tr><td colspan='6' class="text-center">No Data Found...</td></tr>`);
                 }
             },
-            complete:function(){
-                setInterval(sendrequest,100000);
-            },
             error: function(e) {
                 console.log(e.responseText);
             }
         });
-    }
     });
 
     $('.addbtn').click(function() {
