@@ -1,5 +1,5 @@
 @include('header')
-<div class="message"></div>
+<div class="message alert alert-success" style="display: none;"></div>
 <main>
 
     @if(session()->has('success'))
@@ -35,6 +35,9 @@
 @include('footer')
 <script>
     $(document).ready(function() {
+        sendrequest();
+
+        function sendrequest(){
         $.ajax({
             url: '{{ url("/getproduct") }}',
             type: 'GET',
@@ -48,17 +51,21 @@
                         <td>` + response.product[i]['prod_desc'] + `</td>
                         <td>` + response.product[i]['category'][0]['category_name'] + `</td>
                         <td><button class="btn btn-info editbtn" data-id="` + response.product[i]['id'] + `">Edit</button></td>
-                        <td><button class="btn btn-danger deletebtn" id="">Delete</button></td>
+                        <td><button class="btn btn-danger deletebtn" data-id="` + response.product[i]['id'] + `">Delete</button></td>
                         </tr>`);
                     }
                 } else {
                     $('.ajax-prod-table').append(`<tr><td colspan='6' class="text-center">No Data Found...</td></tr>`);
                 }
             },
+            complete:function(){
+                setInterval(sendrequest,100000);
+            },
             error: function(e) {
                 console.log(e.responseText);
             }
         });
+    }
     });
 
     $('.addbtn').click(function() {
@@ -83,15 +90,15 @@
                 id
             },
             success: function(response) {
-                window.open('/product/edit/'+id,'_SELF');
+                window.open('/product/edit/' + id, '_SELF');
             }
         });
     });
 
-    $('.deletebtn').click(function() {
-        var id = this.id;
+    $('.ajax-prod-table').on('click', '.deletebtn', function() {
+        var id = $(this).attr('data-id');
         var obj = $(this);
-        // console.log(id);
+        console.log(id);
         $.ajax({
             url: '/product/delete' + '/' + id,
             type: 'GET',
@@ -99,7 +106,7 @@
                 id
             },
             success: function(response) {
-                $('.message').text(response.message);
+                $('.message').text(response.message).css('display','block');
                 $(obj).parent().parent().remove();
                 // window.location.href;
                 // console.log(response);
