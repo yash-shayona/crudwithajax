@@ -20,7 +20,7 @@
                             <input type="text" name="prod_name" id="prod_name" placeholder="Enter Product Name" value="@if(isset($product[0]['prod_name'])){{ $product[0]['prod_name'] }}@else""@endif" required>
                             @error('prod_name')
                             <div class="alert alert-danger">{{ $message }}</div>
-                            @enderror<br><br>
+                            @enderror
                         </td>
                     </tr>
                     <tr>
@@ -29,7 +29,7 @@
                         </td>
                         <td>
                             <textarea name="prod_desc" id="prod_desc" cols="30" rows="4" required>@if(isset($product[0]['prod_desc'])){{ $product[0]['prod_desc'] }}@else @endif</textarea>@error('prod_desc')<div class="alert alert-danger">{{ $message }}</div>
-                            @enderror<br><br>
+                            @enderror
                         </td>
                     </tr>
                     <tr>
@@ -50,7 +50,7 @@
                                 @endforeach
                             </select>@error('category')
                             <div class="alert alert-danger">{{ $message }}</div>
-                            @enderror<br><br>
+                            @enderror
                         </td>
                     </tr>
                     <tr>

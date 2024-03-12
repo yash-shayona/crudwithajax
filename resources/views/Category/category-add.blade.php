@@ -15,7 +15,6 @@
                             @error('category_name')
                             <div class="alert alert-danger">{{ $message }}</div>
                             @enderror
-                            <br><br>
                         </td>
                     </tr>
                     <tr>
