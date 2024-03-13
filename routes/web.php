@@ -60,3 +60,4 @@ Route::get('/subcategory/add',[SubcategoryController::class,'add']);
 Route::get('/getcategory',[SubcategoryController::class,'getcategory']);
 Route::post('/subcategory/save',[SubcategoryController::class,'save']);
 Route::get('/getcattosubcat',[SubcategoryController::class,'getcattosubcat']);
+Route::get('/prodtocat',[SubcategoryController::class,'prodtocat']);

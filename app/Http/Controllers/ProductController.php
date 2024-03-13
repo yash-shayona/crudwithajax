@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\SubCategory;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -31,7 +32,10 @@ class ProductController extends Controller
         $url = url("/product/store");
         $category = Category::select('category_id', 'category_name')->get()->toArray();
         // dd($category);
+        $subcategory=SubCategory::select('subcategory_id','subcategory_name')->get()->toArray();
+        // dd($subcategory);
         $resp_data['url'] = $url;
+        $resp_data['subcategory'] = $subcategory;
         $resp_data['category'] = $category;
         return view("Product.product-add", $resp_data);
     }
@@ -196,7 +200,7 @@ class ProductController extends Controller
 
     public function getproduct()
     {
-        $product = Product::with('category')
+        $product = Product::select('id','prod_name','prod_desc','subcategory_id')->with('category','subcategory')
             ->where('status', 1)
             ->get()
             ->toArray();

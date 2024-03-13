@@ -1,5 +1,8 @@
 @include('header')
 <div class="message alert alert-success" style="display: none;"></div>
+<div class="message alert alert-warning alert-dismissible fade show" role="alert" style="display: none;">
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
 <main>
 
     @if(session()->has('success'))
@@ -17,11 +20,12 @@
 
 
     <div class="categorytable mt-3 container">
-        <table class="table table-bordered ajax-prod-table">
+        <table class="table table-bordered ajax-prod-table text-center">
             <tr>
                 <th>Product No</th>
                 <th>Product Name</th>
                 <th>Product Description</th>
+                <th>Product SubCategory</th>
                 <th>Product Category</th>
                 <th>Edit</th>
                 <th>Delete</th>
@@ -46,6 +50,7 @@
                         <td>` + (i + 1) + `</td>
                         <td>` + response.product[i]['prod_name'] + `</td>
                         <td>` + response.product[i]['prod_desc'] + `</td>
+                        <td>` + response.product[i]['subcategory'][0]['subcategory_name'] + `</td>
                         <td>` + response.product[i]['category'][0]['category_name'] + `</td>
                         <td><button class="btn btn-info editbtn" data-id="` + response.product[i]['id'] + `">Edit</button></td>
                         <td><button class="btn btn-danger deletebtn" data-id="` + response.product[i]['id'] + `">Delete</button></td>
@@ -99,7 +104,7 @@
                 id
             },
             success: function(response) {
-                $('.message').text(response.message).css('display','block');
+                $('.message').text(response.message).css('display', 'block');
                 $(obj).parent().parent().remove();
                 // window.location.href;
                 // console.log(response);

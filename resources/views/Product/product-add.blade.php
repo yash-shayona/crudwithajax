@@ -50,6 +50,28 @@
                     </tr>
                     <tr>
                         <td>
+                            <label for="category">Product SubCategory</label>
+                        </td>
+                        <td>
+                            <select name="subcategory_id" id="subcategory">
+                                <option value="">Select</option>
+                                @foreach($subcategory as $s)
+                                @if(isset($product[0]['category_id']))
+                                @foreach($product as $p)
+                                <option value="{{ $s['subcategory_id'] }}" @if($p['category_id']==$s['subcategory_id']) {{ "selected" }} @endif>{{ $s['subcategory_name'] }}</option>
+                                @endforeach
+                                @else
+                                <option value="{{ $s['subcategory_id'] }}">{{ $s['subcategory_name'] }}</option>
+                                @endif
+                                
+                                @endforeach
+                            </select>@error('category')
+                            <div class="alert alert-danger">{{ $message }}</div>
+                            @enderror
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
                             <input type="submit" class="btn btn-success" value="@if(isset($product[0]['id'])){{ 'Update' }}@else{{ 'Submit' }} @endif">
                         </td>
                     </tr>

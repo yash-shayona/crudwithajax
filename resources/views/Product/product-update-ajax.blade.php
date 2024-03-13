@@ -17,7 +17,7 @@
                             <label for="prod_name">Product Name</label>
                         </td>
                         <td>
-                            <input type="text" name="prod_name" id="prod_name" placeholder="Enter Product Name" value="@if(isset($product[0]['prod_name'])){{ $product[0]['prod_name'] }}@else""@endif" required>
+                            <input type="text" class="form-control" name="prod_name" id="prod_name" placeholder="Enter Product Name" value="@if(isset($product[0]['prod_name'])){{ $product[0]['prod_name'] }}@else""@endif" required>
                             @error('prod_name')
                             <div class="alert alert-danger">{{ $message }}</div>
                             @enderror
@@ -28,7 +28,7 @@
                             <label for="prod_desc">Product Description</label>
                         </td>
                         <td>
-                            <textarea name="prod_desc" id="prod_desc" cols="30" rows="4" required>@if(isset($product[0]['prod_desc'])){{ $product[0]['prod_desc'] }}@else @endif</textarea>@error('prod_desc')<div class="alert alert-danger">{{ $message }}</div>
+                            <textarea name="prod_desc" class="form-control" id="prod_desc" cols="30" rows="4" required>@if(isset($product[0]['prod_desc'])){{ $product[0]['prod_desc'] }}@else @endif</textarea>@error('prod_desc')<div class="alert alert-danger">{{ $message }}</div>
                             @enderror
                         </td>
                     </tr>
@@ -37,7 +37,7 @@
                             <label for="category">Product Category</label>
                         </td>
                         <td>
-                            <select name="category_id" id="category" required>
+                            <select name="category_id" id="category" class="form-control" required>
                                 <option value="">Select</option>
                                 @foreach($category as $c)
                                 @if(isset($product[0]['category_id']))
@@ -51,6 +51,16 @@
                             </select>@error('category')
                             <div class="alert alert-danger">{{ $message }}</div>
                             @enderror
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="prod_subcategory">Product SubCategory</label>
+                        </td>
+                        <td>
+                            <select name="subcategory_id" id="prod_subcategory" class="form-control">
+                                <option value="">Select</option>
+                            </select>
                         </td>
                     </tr>
                     <tr>
@@ -72,27 +82,73 @@
             var form = $('#proddataform')[0];
             var data = new FormData(form);
 
-            var id=$('#id').val();
+            var id = $('#id').val();
             console.log(id);
-            $('.updatebtn').prop('disabled',true);
+            $('.updatebtn').prop('disabled', true);
 
             $.ajax({
-                url:'{{ url("/product/update") }}'+'/'+id,
-                type:"POST",
-                data:data,
-                processData:false,
-                contentType:false,
-                success:function(response){
-                    $('.message').text(response.message).css('display','block');
-                    window.setTimeout(function(){
-                        window.open('/product','_SELF');
-                    },2000);
+                url: '{{ url("/product/update") }}' + '/' + id,
+                type: "POST",
+                data: data,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    $('.message').text(response.message).css('display', 'block');
+                    window.setTimeout(function() {
+                        window.open('/product', '_SELF');
+                    }, 2000);
                 },
-                error:function(e){
-                    $('.message').text(response.message).css('display','block').attr('class','alert alert-danger');
+                error: function(e) {
+                    $('.message').text(response.message).css('display', 'block').attr('class', 'alert alert-danger');
                 }
             })
         });
+
+        if ($('#category option:selected').each) {
+            $('#category option:selected').each(function(){
+                var id=this.value;
+                var prodid = $('#id').val();
+                $.ajax({
+                    url: '{{ url("/getcattosubcat") }}',
+                    type: 'GET',
+                    data: {
+                        id,prodid
+                    },
+                    success: function(response) {
+                        if (response.length > 0) {
+                            $('#prod_subcategory').html(response);
+                        } else {
+                            $('#prod_subcategory').html(`<option>No SubCategory Available...</option>`);
+                        }
+                    },
+                    error: function(e) {
+                        console.log(e.responseText);
+                    }
+                });
+            })
+        } else {
+            $('#category').on('change', function() {
+                var id = this.value;
+                $.ajax({
+                    url: '{{ url("/getcattosubcat") }}',
+                    type: 'GET',
+                    data: {
+                        id
+                    },
+                    success: function(response) {
+                        if (response.length > 0) {
+                            $('#prod_subcategory').html(response);
+                        } else {
+                            $('#prod_subcategory').html(`<option>No SubCategory Available...</option>`);
+                        }
+
+                    },
+                    error: function(e) {
+                        console.log(e.responseText);
+                    }
+                });
+            })
+        }
     });
 </script>
 
