@@ -1,8 +1,8 @@
 @include('header')
 <div class="message alert alert-success" style="display: none;"></div>
-<div class="message alert alert-warning alert-dismissible fade show" role="alert" style="display: none;">
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
+<!-- <div class="message alert alert-warning alert-dismissible fade show" role="alert" style="display: none;">
+    
+</div> -->
 <main>
 
     @if(session()->has('success'))
@@ -20,7 +20,8 @@
 
 
     <div class="categorytable mt-3 container">
-        <table class="table table-bordered ajax-prod-table text-center">
+        <table class="table table-bordered text-center">
+            <thead>
             <tr>
                 <th>Product No</th>
                 <th>Product Name</th>
@@ -30,6 +31,10 @@
                 <th>Edit</th>
                 <th>Delete</th>
             </tr>
+        </thead>
+        <tbody class="ajax-prod-table">
+
+        </tbody>
         </table>
 
     </div>
@@ -44,20 +49,35 @@
             type: 'GET',
             success: function(response) {
                 // console.log(response);
-                if (response.product.length > 0) {
-                    for (var i = 0; i < response.product.length; i++) {
-                        $('.ajax-prod-table').append(`<tr>
-                        <td>` + (i + 1) + `</td>
-                        <td>` + response.product[i]['prod_name'] + `</td>
-                        <td>` + response.product[i]['prod_desc'] + `</td>
-                        <td>` + response.product[i]['subcategory'][0]['subcategory_name'] + `</td>
-                        <td>` + response.product[i]['category'][0]['category_name'] + `</td>
-                        <td><button class="btn btn-info editbtn" data-id="` + response.product[i]['id'] + `">Edit</button></td>
-                        <td><button class="btn btn-danger deletebtn" data-id="` + response.product[i]['id'] + `">Delete</button></td>
-                        </tr>`);
-                    }
-                } else {
-                    $('.ajax-prod-table').append(`<tr><td colspan='6' class="text-center">No Data Found...</td></tr>`);
+                if (response.length > 0) {
+                    // for (var i = 0; i < response.product.length; i++) {
+                    //     if (response.product[i]['subcategory_id'] == null || response.product[i]['subcategory'].length == 0) {
+                    //         $('.ajax-prod-table').append(`<tr>
+                    //     <td>` + (i + 1) + `</td>
+                    //     <td>` + response.product[i]['prod_name'] + `</td>
+                    //     <td>` + response.product[i]['prod_desc'] + `</td>
+                    //     <td>No Subcategory For This Item</td>
+                    //     <td>No Category For This Item</td>
+                    //     <td><button class="btn btn-info editbtn" data-id="` + response.product[i]['id'] + `">Edit</button></td>
+                    //     <td><button class="btn btn-danger deletebtn" data-id="` + response.product[i]['id'] + `">Delete</button></td>
+                    //     </tr>`);
+                    //     } else {
+                    //         $('.ajax-prod-table').append(`<tr>
+                    //     <td>` + (i + 1) + `</td>
+                    //     <td>` + response.product[i]['prod_name'] + `</td>
+                    //     <td>` + response.product[i]['prod_desc'] + `</td>
+                    //     <td>` + response.product[i]['subcategory'][0]['subcategory_name'] + `</td>
+                    //     <td>` + response.product[i]['category'][0]['category_name'] + `</td>
+                    //     <td><button class="btn btn-info editbtn" data-id="` + response.product[i]['id'] + `">Edit</button></td>
+                    //     <td><button class="btn btn-danger deletebtn" data-id="` + response.product[i]['id'] + `">Delete</button></td>
+                    //     </tr>`);
+                    //     }
+                    // }
+                    $('.ajax-prod-table').html(response);
+                } 
+                else {
+                    // $('.ajax-prod-table').append(`<tr><td colspan='6' class="text-center">No Data Found...</td></tr>`);
+                    $('.ajax-prod-table').html(response);
                 }
             },
             error: function(e) {
@@ -106,7 +126,10 @@
             success: function(response) {
                 $('.message').text(response.message).css('display', 'block');
                 $(obj).parent().parent().remove();
-                // window.location.href;
+                window.setTimeout(function() {
+                    window.open(window.location.href, "_SELF");
+                }, 2000);
+
                 // console.log(response);
             },
             error: function(e) {

@@ -61,3 +61,6 @@ Route::get('/getcategory',[SubcategoryController::class,'getcategory']);
 Route::post('/subcategory/save',[SubcategoryController::class,'save']);
 Route::get('/getcattosubcat',[SubcategoryController::class,'getcattosubcat']);
 Route::get('/prodtocat',[SubcategoryController::class,'prodtocat']);
+Route::get('/subcategory/edit/{id}',[SubcategoryController::class,'edit']);
+Route::post('/subcategory/update/{id}',[SubcategoryController::class,'update']);
+Route::get('/subcategory/delete/{id}',[SubcategoryController::class,'delete']);

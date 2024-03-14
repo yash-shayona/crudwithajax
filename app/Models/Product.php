@@ -12,7 +12,7 @@ class Product extends Model
     use HasFactory;
 
     public function category(){
-        return $this->hasManyThrough(Category::class,SubCategory::class,"subcategory_id","category_id","subcategory_id","category_id");
+        return $this->hasManyThrough(Category::class,SubCategory::class,"subcategory_id","category_id","subcategory_id","category_id")->select('category.category_id','category_name')->where('category.status',1)->where('subcategory.status',1);
     }
 
     public function subcategory(){

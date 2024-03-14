@@ -32,7 +32,7 @@ class ProductController extends Controller
         $url = url("/product/store");
         $category = Category::select('category_id', 'category_name')->get()->toArray();
         // dd($category);
-        $subcategory=SubCategory::select('subcategory_id','subcategory_name')->get()->toArray();
+        $subcategory = SubCategory::select('subcategory_id', 'subcategory_name')->get()->toArray();
         // dd($subcategory);
         $resp_data['url'] = $url;
         $resp_data['subcategory'] = $subcategory;
@@ -200,19 +200,37 @@ class ProductController extends Controller
 
     public function getproduct()
     {
-        $product = Product::select('id','prod_name','prod_desc','subcategory_id')->with('category','subcategory')
+        $html = "";
+        $product = Product::select('id', 'prod_name', 'prod_desc', 'subcategory_id')->with('category', 'subcategory')
             ->where('status', 1)
             ->get()
             ->toArray();
-        return response()->json(['product'=>$product]);
+
+        $i = 1;
+        foreach ($product as $p) {
+            if ($p['subcategory_id'] == null || $p['subcategory'] == null || $p['category'] == null) {
+                $html .= "<tr><td>" . $i . "</td><td>" . $p['prod_name'] . "</td><td>" . $p['prod_desc'] . "</td><td>No Subcategory For This Item</td><td>No Category For This Item</td><td><button class='btn btn-info'>Edit</button></td><td><button class='btn btn-danger'>Delete</button></td></tr>";
+            } else {
+                foreach ($p['subcategory'] as $s) {
+                    foreach ($p['category'] as $c) {
+                        $html .= "<tr><td>" . $i . "</td><td>" . $p['prod_name'] . "</td><td>" . $p['prod_desc'] . "</td><td>" . $s['subcategory_name'] . "</td><td>" . $c['category_name'] . "</td><td><button class='btn btn-info'>Edit</button></td><td><button class='btn btn-danger'>Delete</button></td></tr>";
+                    }
+                }
+            }
+
+            $i++;
+        }
+        return response()->json($html);
     }
 
-    public function addajax(){
+    public function addajax()
+    {
         $category = Category::select('category_id', 'category_name')->get()->toArray();
-        return view('Product.product-add-ajax',['category'=>$category]);
+        return view('Product.product-add-ajax', ['category' => $category]);
     }
 
-    public function storeajax(Request $req){
+    public function storeajax(Request $req)
+    {
         $array = $req->all();
         unset($array["_token"]);
         $array['status'] = 1;
@@ -231,6 +249,6 @@ class ProductController extends Controller
         $id = $req->id;
         $product = Product::where('id', $id)->get()->toArray();
         $category = Category::select('category_id', 'category_name')->get()->toArray();
-        return view('Product.product-update-ajax',['category'=>$category,'product'=>$product,'id'=>$id]);
+        return view('Product.product-update-ajax', ['category' => $category, 'product' => $product, 'id' => $id]);
     }
 }

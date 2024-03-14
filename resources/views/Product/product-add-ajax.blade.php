@@ -113,7 +113,7 @@
                     if (response.length > 0) {
                         $('#prod_subcategory').html(response);
                     } else {
-                        $('#prod_subcategory').html(`<option>No SubCategory Available...</option>`);
+                        $('#prod_subcategory').html(`<option value="">No SubCategory Available...</option>`);
                     }
 
                 },

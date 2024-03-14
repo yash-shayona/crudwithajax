@@ -105,20 +105,42 @@
         });
 
         if ($('#category option:selected').each) {
-            $('#category option:selected').each(function(){
-                var id=this.value;
+            $('#category option:selected').each(function() {
+                var id = this.value;
                 var prodid = $('#id').val();
                 $.ajax({
                     url: '{{ url("/getcattosubcat") }}',
                     type: 'GET',
                     data: {
-                        id,prodid
+                        id,
+                        prodid
                     },
                     success: function(response) {
                         if (response.length > 0) {
                             $('#prod_subcategory').html(response);
                         } else {
-                            $('#prod_subcategory').html(`<option>No SubCategory Available...</option>`);
+                            $('#prod_subcategory').html(`<option value="">No SubCategory Available...</option>`);
+                        }
+                    },
+                    error: function(e) {
+                        console.log(e.responseText);
+                    }
+                });
+            });
+
+            $('#category').on('change', function() {
+                var id = this.value;
+                $.ajax({
+                    url: '{{ url("/getcattosubcat") }}',
+                    type: 'GET',
+                    data: {
+                        id
+                    },
+                    success: function(response) {
+                        if (response.length > 0) {
+                            $('#prod_subcategory').html(response);
+                        } else {
+                            $('#prod_subcategory').html(`<option value="">No SubCategory Available...</option>`);
                         }
                     },
                     error: function(e) {
@@ -126,6 +148,7 @@
                     }
                 });
             })
+
         } else {
             $('#category').on('change', function() {
                 var id = this.value;
@@ -139,7 +162,7 @@
                         if (response.length > 0) {
                             $('#prod_subcategory').html(response);
                         } else {
-                            $('#prod_subcategory').html(`<option>No SubCategory Available...</option>`);
+                            $('#prod_subcategory').html(`<option value="">No SubCategory Available...</option>`);
                         }
 
                     },
