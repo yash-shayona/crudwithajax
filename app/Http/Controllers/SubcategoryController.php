@@ -22,12 +22,12 @@ class SubcategoryController extends Controller
             $i = 1;
             foreach ($subcategory as $key => $value) {
                 foreach ($value['category'] as $k => $v) {
-                    $html .= "<tr><td>" . $i . "</td><td>" . $value['subcategory_name'] . "</td><td>" . $v['category_name'] . "</td><td><a href=" . url('/subcategory/edit') . '/' . $value['subcategory_id'] . "><button class='btn btn-info'>Edit</button></a></td><td><a href=" . url('/subcategory/delete') . '/' . $value['subcategory_id'] . "><button class='btn btn-danger'>Delete</button></a></td></tr>";
+                    $html .= "<tr><td>" . $i . "</td><td>" . $value['subcategory_name'] . "</td><td>" . $v['category_name'] . "</td><td><a href=" . url('/subcategory/edit') . '/' . encrypt($value['subcategory_id']) . "><button class='btn btn-info'>Edit</button></a></td><td><a href=" . url('/subcategory/delete') . '/' . encrypt($value['subcategory_id']) . "><button class='btn btn-danger'>Delete</button></a></td></tr>";
                 }
                 $i++;
             }
         } else {
-            $html .= "<tr><td colspan='5'>No Records Found...</td></tr>";
+            $html .= "<tr><td colspan='5' class='text-center'>No Records Found...</td></tr>";
         }
         return response()->json($html);
     }
@@ -139,14 +139,16 @@ class SubcategoryController extends Controller
 
     public function edit($id)
     {
+        $id=decrypt($id);
         $table = SubCategory::with('category')->where("subcategory_id", $id)->where('status', 1)->get()->toArray();
-        $url = url("/subcategory/update") . '/' . $id;
+        $url = url("/subcategory/update") . '/' . encrypt($id);
         $resp_data['url'] = $url;
         $resp_data['subcategory'] = $table;
         return view('SubCategory.subcategory-add', $resp_data);
     }
 
     public function update(Request $req,$id){
+        $id=decrypt($id);
         $array=$req->all();
         unset($array['_token']);
         // $array['updated_at']=date('Y-m-d H:i:s');
@@ -160,6 +162,7 @@ class SubcategoryController extends Controller
     }
 
     public function delete($id){
+        $id=decrypt($id);
         $table=SubCategory::where('subcategory_id',$id)->update(['status'=>0]);
         if($table){
             return redirect('/subcategory')->with('success','Record Deleted Successfully');

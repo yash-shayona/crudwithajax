@@ -48,35 +48,10 @@
             url: '{{ url("/getproduct") }}',
             type: 'GET',
             success: function(response) {
-                // console.log(response);
                 if (response.length > 0) {
-                    // for (var i = 0; i < response.product.length; i++) {
-                    //     if (response.product[i]['subcategory_id'] == null || response.product[i]['subcategory'].length == 0) {
-                    //         $('.ajax-prod-table').append(`<tr>
-                    //     <td>` + (i + 1) + `</td>
-                    //     <td>` + response.product[i]['prod_name'] + `</td>
-                    //     <td>` + response.product[i]['prod_desc'] + `</td>
-                    //     <td>No Subcategory For This Item</td>
-                    //     <td>No Category For This Item</td>
-                    //     <td><button class="btn btn-info editbtn" data-id="` + response.product[i]['id'] + `">Edit</button></td>
-                    //     <td><button class="btn btn-danger deletebtn" data-id="` + response.product[i]['id'] + `">Delete</button></td>
-                    //     </tr>`);
-                    //     } else {
-                    //         $('.ajax-prod-table').append(`<tr>
-                    //     <td>` + (i + 1) + `</td>
-                    //     <td>` + response.product[i]['prod_name'] + `</td>
-                    //     <td>` + response.product[i]['prod_desc'] + `</td>
-                    //     <td>` + response.product[i]['subcategory'][0]['subcategory_name'] + `</td>
-                    //     <td>` + response.product[i]['category'][0]['category_name'] + `</td>
-                    //     <td><button class="btn btn-info editbtn" data-id="` + response.product[i]['id'] + `">Edit</button></td>
-                    //     <td><button class="btn btn-danger deletebtn" data-id="` + response.product[i]['id'] + `">Delete</button></td>
-                    //     </tr>`);
-                    //     }
-                    // }
                     $('.ajax-prod-table').html(response);
                 } 
                 else {
-                    // $('.ajax-prod-table').append(`<tr><td colspan='6' class="text-center">No Data Found...</td></tr>`);
                     $('.ajax-prod-table').html(response);
                 }
             },

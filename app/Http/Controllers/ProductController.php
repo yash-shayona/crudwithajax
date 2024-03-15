@@ -187,9 +187,11 @@ class ProductController extends Controller
         $id = $req->id;
         $table = Product::where('id', $id)->update(['status' => 0]);
         if ($table) {
-            return response()->json(['message' => 'Record Deleted Successfully']);
+            // return response()->json(['message' => 'Record Deleted Successfully']);
+            return redirect('/product')->with('success','Record Deleted Successfully');
         } else {
-            return response()->json(['message' => 'Record Deleted Failed']);
+            // return response()->json(['message' => 'Record Deleted Failed']);
+            return redirect('/product')->with('error','Record Deleted Failed');
         }
     }
 
@@ -206,20 +208,25 @@ class ProductController extends Controller
             ->get()
             ->toArray();
 
-        $i = 1;
-        foreach ($product as $p) {
-            if ($p['subcategory_id'] == null || $p['subcategory'] == null || $p['category'] == null) {
-                $html .= "<tr><td>" . $i . "</td><td>" . $p['prod_name'] . "</td><td>" . $p['prod_desc'] . "</td><td>No Subcategory For This Item</td><td>No Category For This Item</td><td><button class='btn btn-info'>Edit</button></td><td><button class='btn btn-danger'>Delete</button></td></tr>";
-            } else {
-                foreach ($p['subcategory'] as $s) {
-                    foreach ($p['category'] as $c) {
-                        $html .= "<tr><td>" . $i . "</td><td>" . $p['prod_name'] . "</td><td>" . $p['prod_desc'] . "</td><td>" . $s['subcategory_name'] . "</td><td>" . $c['category_name'] . "</td><td><button class='btn btn-info'>Edit</button></td><td><button class='btn btn-danger'>Delete</button></td></tr>";
+        if ($product) {
+            $i = 1;
+            foreach ($product as $p) {
+                if ($p['subcategory_id'] == null || $p['subcategory'] == null || $p['category'] == null) {
+                    $html .= "<tr><td>" . $i . "</td><td>" . $p['prod_name'] . "</td><td>" . $p['prod_desc'] . "</td><td>No Subcategory For This Item</td><td>No Category For This Item</td><td><button class='btn btn-info'>Edit</button></td><td><button class='btn btn-danger'>Delete</button></td></tr>";
+                } else {
+                    foreach ($p['subcategory'] as $s) {
+                        foreach ($p['category'] as $c) {
+                            $html .= "<tr><td>" . $i . "</td><td>" . $p['prod_name'] . "</td><td>" . $p['prod_desc'] . "</td><td>" . $s['subcategory_name'] . "</td><td>" . $c['category_name'] . "</td><td><a href=".url('/product/edit').'/'.$p['id']."><button class='btn btn-info'>Edit</button></a></td><td><a href=".url('/product/delete').'/'.$p['id']."><button class='btn btn-danger'>Delete</button></a></td></tr>";
+                        }
                     }
                 }
+                $i++;
             }
-
-            $i++;
+        } 
+        else {
+            $html.="<tr><td colspan='7' class='text-center'>No Data Found...</td></tr>";
         }
+
         return response()->json($html);
     }
 
