@@ -17,7 +17,7 @@
 
 
     <div class="categorytable mt-3 container">
-        <table class="table table-bordered">
+        <table class="table table-bordered text-center">
             <tr>
                 <th>Category No</th>
                 <th>Category Name</th>

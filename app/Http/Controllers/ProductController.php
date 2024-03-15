@@ -31,9 +31,7 @@ class ProductController extends Controller
     {
         $url = url("/product/store");
         $category = Category::select('category_id', 'category_name')->get()->toArray();
-        // dd($category);
         $subcategory = SubCategory::select('subcategory_id', 'subcategory_name')->get()->toArray();
-        // dd($subcategory);
         $resp_data['url'] = $url;
         $resp_data['subcategory'] = $subcategory;
         $resp_data['category'] = $category;
@@ -50,7 +48,6 @@ class ProductController extends Controller
         unset($array["_token"]);
         $array['status'] = 1;
         $array['created_at'] = date('Y-m-d H:i:s');
-        // dd($array);
         $table = Product::insert($array);
         if ($table) {
             return redirect('/product')->with(['success' => 'Record Inserted Successfully']);
@@ -64,7 +61,6 @@ class ProductController extends Controller
         $url = url('/product/page/' . $page . '/' . 'update/' . $id);
         $id = decrypt($id);
         $product = Product::where('id', $id)->get()->toArray();
-        // dd($product);
         $category = Category::select('category_id', 'category_name')->get()->toArray();
         $resp_data['url'] = $url;
         $resp_data['page'] = $page;
@@ -93,7 +89,6 @@ class ProductController extends Controller
         $id = decrypt($id);
         $array = $req->all();
         $array['id'] = $id;
-        // dd($array);
         unset($array["_token"]);
         $array['updated_at'] = date('Y-m-d H:i:s');
         $table = Product::where('id', $id)->update($array);
@@ -105,18 +100,6 @@ class ProductController extends Controller
     }
     public function updateajax(Request $req)
     {
-        // $id = decrypt($id);
-        // $array = $req->all();
-        // $array['id'] = $id;
-        // dd($array);
-        // unset($array["_token"]);
-        // $array['updated_at'] = date('Y-m-d H:i:s');
-        // $table = Product::where('id', $id)->update($array);
-        // if ($table) {
-        // return redirect('/product/page/' . $page)->with(['success' => 'Record Updated Successfully']);
-        // } else {
-        // return redirect('/product/page/' . $page)->with(['error' => 'Record Updated Failed']);
-        // }
         $id = $req->id;
         $url = url('/product/update/' . $id);
         $product = Product::where('id', $id)->get()->toArray();
@@ -157,7 +140,6 @@ class ProductController extends Controller
     }
     public function editview(Request $req)
     {
-        // dd($req->all());
         $id = $req->id;
         $url = url('/product/edit/' . $id);
         $product = Product::where('id', $id)->get()->toArray();
@@ -168,10 +150,8 @@ class ProductController extends Controller
 
     public function updatepost(Request $req)
     {
-        // $url= url('/product');
         $id = $req->id;
         $array = $req->all();
-        // dd($array);
         unset($array["_token"]);
         $array['updated_at'] = date('Y-m-d H:i:s');
         $table = Product::where('id', $id)->update($array);
@@ -188,10 +168,10 @@ class ProductController extends Controller
         $table = Product::where('id', $id)->update(['status' => 0]);
         if ($table) {
             // return response()->json(['message' => 'Record Deleted Successfully']);
-            return redirect('/product')->with('success','Record Deleted Successfully');
+            return redirect('/product')->with('success', 'Record Deleted Successfully');
         } else {
             // return response()->json(['message' => 'Record Deleted Failed']);
-            return redirect('/product')->with('error','Record Deleted Failed');
+            return redirect('/product')->with('error', 'Record Deleted Failed');
         }
     }
 
@@ -200,33 +180,63 @@ class ProductController extends Controller
         return view('Product.product-list-ajax');
     }
 
-    public function getproduct()
+    public function getproduct(Request $req)
     {
+        $page = $req->page;
         $html = "";
-        $product = Product::select('id', 'prod_name', 'prod_desc', 'subcategory_id')->with('category', 'subcategory')
-            ->where('status', 1)
-            ->get()
-            ->toArray();
+        $limit = 5;
+        $offset = ($page - 1) * $limit;
+        if ($page) {
+            $product = Product::select('id', 'prod_name', 'prod_desc', 'subcategory_id')->with('category', 'subcategory')
+                ->offset($offset)
+                ->limit(5)
+                ->where('status', 1)
+                ->get()
+                ->toArray();
 
-        if ($product) {
-            $i = 1;
-            foreach ($product as $p) {
-                if ($p['subcategory_id'] == null || $p['subcategory'] == null || $p['category'] == null) {
-                    $html .= "<tr><td>" . $i . "</td><td>" . $p['prod_name'] . "</td><td>" . $p['prod_desc'] . "</td><td>No Subcategory For This Item</td><td>No Category For This Item</td><td><button class='btn btn-info'>Edit</button></td><td><button class='btn btn-danger'>Delete</button></td></tr>";
-                } else {
-                    foreach ($p['subcategory'] as $s) {
-                        foreach ($p['category'] as $c) {
-                            $html .= "<tr><td>" . $i . "</td><td>" . $p['prod_name'] . "</td><td>" . $p['prod_desc'] . "</td><td>" . $s['subcategory_name'] . "</td><td>" . $c['category_name'] . "</td><td><a href=".url('/product/edit').'/'.$p['id']."><button class='btn btn-info'>Edit</button></a></td><td><a href=".url('/product/delete').'/'.$p['id']."><button class='btn btn-danger'>Delete</button></a></td></tr>";
+            if ($product) {
+                $i = 1;
+                foreach ($product as $p) {
+                    if ($p['subcategory_id'] == null || $p['subcategory'] == null || $p['category'] == null) {
+                        $html .= "<tr><td>" . $i . "</td><td>" . $p['prod_name'] . "</td><td>" . $p['prod_desc'] . "</td><td>No Subcategory For This Item</td><td>No Category For This Item</td><td><button class='btn btn-info'>Edit</button></td><td><button class='btn btn-danger'>Delete</button></td></tr>";
+                    } else {
+                        foreach ($p['subcategory'] as $s) {
+                            foreach ($p['category'] as $c) {
+                                $html .= "<tr><td>" . $i . "</td><td>" . $p['prod_name'] . "</td><td>" . $p['prod_desc'] . "</td><td>" . $s['subcategory_name'] . "</td><td>" . $c['category_name'] . "</td><td><a href=" . url('/product/edit') . '/' . $p['id'] . "><button class='btn btn-info'>Edit</button></a></td><td><a href=" . url('/product/delete') . '/' . $p['id'] . "><button class='btn btn-danger'>Delete</button></a></td></tr>";
+                            }
                         }
                     }
+                    $i++;
                 }
-                $i++;
+            } else {
+                $html .= "<tr><td colspan='7' class='text-center'>No Data Found...</td></tr>";
             }
-        } 
-        else {
-            $html.="<tr><td colspan='7' class='text-center'>No Data Found...</td></tr>";
-        }
+        } else {
+            $product = Product::select('id', 'prod_name', 'prod_desc', 'subcategory_id')->with('category', 'subcategory')
+                ->offset(0)
+                ->limit(5)
+                ->where('status', 1)
+                ->get()
+                ->toArray();
 
+            if ($product) {
+                $i = 1;
+                foreach ($product as $p) {
+                    if ($p['subcategory_id'] == null || $p['subcategory'] == null || $p['category'] == null) {
+                        $html .= "<tr><td>" . $i . "</td><td>" . $p['prod_name'] . "</td><td>" . $p['prod_desc'] . "</td><td>No Subcategory For This Item</td><td>No Category For This Item</td><td><button class='btn btn-info'>Edit</button></td><td><button class='btn btn-danger'>Delete</button></td></tr>";
+                    } else {
+                        foreach ($p['subcategory'] as $s) {
+                            foreach ($p['category'] as $c) {
+                                $html .= "<tr><td>" . $i . "</td><td>" . $p['prod_name'] . "</td><td>" . $p['prod_desc'] . "</td><td>" . $s['subcategory_name'] . "</td><td>" . $c['category_name'] . "</td><td><a href=" . url('/product/edit') . '/' . $p['id'] . "><button class='btn btn-info'>Edit</button></a></td><td><a href=" . url('/product/delete') . '/' . $p['id'] . "><button class='btn btn-danger'>Delete</button></a></td></tr>";
+                            }
+                        }
+                    }
+                    $i++;
+                }
+            } else {
+                $html .= "<tr><td colspan='7' class='text-center'>No Data Found...</td></tr>";
+            }
+        }
         return response()->json($html);
     }
 
@@ -242,7 +252,6 @@ class ProductController extends Controller
         unset($array["_token"]);
         $array['status'] = 1;
         $array['created_at'] = date('Y-m-d H:i:s');
-        // dd($array);
         $table = Product::insert($array);
         if ($table) {
             return response()->json(['message' => 'Record Inserted Successfully']);
@@ -257,5 +266,59 @@ class ProductController extends Controller
         $product = Product::where('id', $id)->get()->toArray();
         $category = Category::select('category_id', 'category_name')->get()->toArray();
         return view('Product.product-update-ajax', ['category' => $category, 'product' => $product, 'id' => $id]);
+    }
+
+    public function pagination(Request $req)
+    {
+        $html = "";
+        if ($req->page) {
+            $page = $req->page;
+            $product = Product::select('id', 'prod_name', 'prod_desc', 'subcategory_id')->with('category', 'subcategory')
+                ->where('status', 1)
+                ->get()
+                ->toArray();
+
+            $total_records = count($product);
+            $limit = 5;
+            $active="btn btn-secondary";
+            $total_page = ceil($total_records / $limit);
+            if ($page >= 2) {
+                $html .= "<button class='btn btn-warning pgbtn' id='" . ($page - 1) . "'>Prev</button>";
+            }
+            for ($i = 1; $i <= $total_page; $i++) {
+                if($i==$page){
+                    $html .= "<button class='".$active." pgbtn' id='" . $i . "' style='margin-left:10px;'>" . $i . "</button>";
+                }
+                else{
+                    $html .= "<button class='btn btn-warning pgbtn' id='" . $i . "' style='margin-left:10px;'>" . $i . "</button>";
+                }
+                
+            }
+            if ($page < $total_page) {
+                $html .= "<button class='btn btn-warning pgbtn' id='" . ($page + 1) . "' style='margin-left:10px;'>Next</button>";
+            }
+        }
+        else{
+            $page = $req->page;
+            $product = Product::select('id', 'prod_name', 'prod_desc', 'subcategory_id')->with('category', 'subcategory')
+                ->where('status', 1)
+                ->get()
+                ->toArray();
+
+            $total_records = count($product);
+            $limit = 5;
+            $page = 1;
+            $total_page = ceil($total_records / $limit);
+            if ($page >= 2) {
+                $html .= "<button class='btn btn-warning pgbtn' id='" . ($page - 1) . "'>Prev</button>";
+            }
+            for ($i = 1; $i <= $total_page; $i++) {
+                $html .= "<button class='btn btn-warning pgbtn' id='" . $i . "' style='margin-left:10px;'>" . $i . "</button>";
+            }
+            if ($page < $total_page) {
+                $html .= "<button class='btn btn-warning pgbtn' id='" . ($page + 1) . "' style='margin-left:10px;'>Next</button>";
+            }
+        }
+        return response()->json($html);
     }
 }

@@ -7,60 +7,60 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    
-    
-    public function category(){
-        $category=Category::where('status',1)->get()->toArray();
-        $resp_data['category']=$category;
-        return view("Category.category-list",$resp_data);
+
+
+    public function category()
+    {
+        $category = Category::where('status', 1)->get()->toArray();
+        $resp_data['category'] = $category;
+        return view("Category.category-list", $resp_data);
     }
 
-    public function add(){
-        $url=url('/category/store');
-        $resp_data['url']=$url;
-        return view("Category.category-add",$resp_data);
+    public function add()
+    {
+        $url = url('/category/store');
+        $resp_data['url'] = $url;
+        return view("Category.category-add", $resp_data);
     }
 
-    public function store(Request $req){
-        $array=$req->all();
+    public function store(Request $req)
+    {
+        $array = $req->all();
         $req->validate([
-            "category_name"=> "required",
+            "category_name" => "required",
         ]);
         unset($array["_token"]);
-        $array['status']=1;
-        $array['created_at']=date('Y-m-d H:i:s');
-        // dd($array);
-        $table= Category::insert($array);
-        if($table){
-            return redirect('/category')->with(['success'=>'record inserted successfully']);
-        }
-        else{
-            return redirect('/category')->with(['error'=>'record inserted failed']);
+        $array['status'] = 1;
+        $array['created_at'] = date('Y-m-d H:i:s');
+        $table = Category::insert($array);
+        if ($table) {
+            return redirect('/category')->with(['success' => 'record inserted successfully']);
+        } else {
+            return redirect('/category')->with(['error' => 'record inserted failed']);
         }
     }
 
-    public function getprodlist($id){
-        $table=Category::with('product')->where('category_id',$id)->get()->toArray();
-        // dd($table);
-        $resp_data['prodlist']=$table;
-        return view('Category.category-product-list',$resp_data);
+    public function getprodlist($id)
+    {
+        $table = Category::with('product')->where('category_id', $id)->get()->toArray();
+        $resp_data['prodlist'] = $table;
+        return view('Category.category-product-list', $resp_data);
     }
 
-    public function edit($id){
+    public function edit($id)
+    {
         $url = url('/category/update/' . $id);
         $id = decrypt($id);
         $category = Category::where('category_id', $id)->get()->toArray();
-        // dd($product);
         $resp_data['url'] = $url;
         $resp_data['category'] = $category;
-        return view("Category.category-add",$resp_data);
+        return view("Category.category-add", $resp_data);
     }
-
-    public function update(Request $req,$id){
+    public function update(Request $req, $id)
+    {
         $id = decrypt($id);
         $array = $req->all();
         $array['category_id'] = $id;
-        // dd($array);
         unset($array["_token"]);
         $array['updated_at'] = date('Y-m-d H:i:s');
         $table = Category::where('category_id', $id)->update($array);
@@ -71,9 +71,10 @@ class CategoryController extends Controller
         }
     }
 
-    public function delete($id){
+    public function delete($id)
+    {
         $id = decrypt($id);
-        $table = Category::where('category_id', $id)->update(['status'=>0]);
+        $table = Category::where('category_id', $id)->update(['status' => 0]);
         if ($table) {
             return redirect('/category')->with(['success' => 'Record Deleted Successfully']);
         } else {

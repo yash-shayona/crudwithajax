@@ -22,21 +22,23 @@
     <div class="categorytable mt-3 container">
         <table class="table table-bordered text-center">
             <thead>
-            <tr>
-                <th>Product No</th>
-                <th>Product Name</th>
-                <th>Product Description</th>
-                <th>Product SubCategory</th>
-                <th>Product Category</th>
-                <th>Edit</th>
-                <th>Delete</th>
-            </tr>
-        </thead>
-        <tbody class="ajax-prod-table">
+                <tr>
+                    <th>Product No</th>
+                    <th>Product Name</th>
+                    <th>Product Description</th>
+                    <th>Product SubCategory</th>
+                    <th>Product Category</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody class="ajax-prod-table">
 
-        </tbody>
+            </tbody>
         </table>
+        <div class="pagination">
 
+        </div>
     </div>
 
 </main>
@@ -44,19 +46,70 @@
 @include('footer')
 <script>
     $(document).ready(function() {
+        if ($('.pagination')) {
+            $('.pagination').on('click', '.pgbtn', function() {
+                var id = this.id;
+                $.ajax({
+                    url: '{{ url("/getproduct") }}',
+                    type: 'GET',
+                    data: {
+                        'page': id
+                    },
+                    success: function(response) {
+                        if (response.length > 0) {
+                            $('.ajax-prod-table').html(response);
+                        } else {
+                            $('.ajax-prod-table').html(response);
+                        }
+                    },
+                    error: function(e) {
+                        console.log(e.responseText);
+                    }
+                });
+            })
+
+        }
+
         $.ajax({
             url: '{{ url("/getproduct") }}',
             type: 'GET',
             success: function(response) {
                 if (response.length > 0) {
                     $('.ajax-prod-table').html(response);
-                } 
-                else {
+                } else {
                     $('.ajax-prod-table').html(response);
                 }
             },
             error: function(e) {
                 console.log(e.responseText);
+            }
+        });
+
+        $('.pagination').on('click', '.pgbtn', function() {
+            var id = this.id;
+            $.ajax({
+                url: '{{ url("/pagination") }}',
+                type: 'GET',
+                data: {
+                    'page': id
+                },
+                success: function(response) {
+                    $('.pagination').html(response);
+                },
+                error: function(response) {
+                    $('.pagination').html(response);
+                }
+            });
+        });
+
+        $.ajax({
+            url: '{{ url("/pagination") }}',
+            type: 'GET',
+            success: function(response) {
+                $('.pagination').html(response);
+            },
+            error: function(response) {
+                $('.pagination').html(response);
             }
         });
     });

@@ -14,7 +14,7 @@
     @endif
 
     <div class="categorytable mt-3 container">
-        <table class="table table-bordered">
+        <table class="table table-bordered text-center">
             <tr>
                 <th>Product No</th>
                 <th>Product Name</th>

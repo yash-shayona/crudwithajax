@@ -44,6 +44,7 @@ Route::get('/product/edit/{id}',[ProductController::class,'editajax']);
 Route::post('/product/update/{id}',[ProductController::class,'updatepost']);
 // Route::post('/product/update',[ProductController::class,'updateajax']);
 Route::get('/product/delete/{id}',[ProductController::class,'deleteajax']);
+Route::get('/pagination',[ProductController::class,'pagination']);
 
 
 Route::get('/category',[CategoryController::class,'category']);
