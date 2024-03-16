@@ -83,7 +83,6 @@
             var data = new FormData(form);
 
             var id = $('#id').val();
-            console.log(id);
             $('.updatebtn').prop('disabled', true);
 
             $.ajax({
@@ -130,11 +129,12 @@
 
             $('#category').on('change', function() {
                 var id = this.value;
+                var prodid = $('#id').val();
                 $.ajax({
                     url: '{{ url("/getcattosubcat") }}',
                     type: 'GET',
                     data: {
-                        id
+                        id,prodid
                     },
                     success: function(response) {
                         if (response.length > 0) {

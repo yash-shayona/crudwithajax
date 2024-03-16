@@ -152,9 +152,11 @@ class ProductController extends Controller
     {
         $id = $req->id;
         $array = $req->all();
+        $prodid=$array['id'];
+        $array['id']=decrypt($prodid);
         unset($array["_token"]);
         $array['updated_at'] = date('Y-m-d H:i:s');
-        $table = Product::where('id', $id)->update($array);
+        $table = Product::where('id', decrypt($id))->update($array);
         if ($table) {
             return response()->json(['message' => 'Record Updated Successfully']);
         } else {
@@ -165,7 +167,7 @@ class ProductController extends Controller
     public function deleteajax(Request $req)
     {
         $id = $req->id;
-        $table = Product::where('id', $id)->update(['status' => 0]);
+        $table = Product::where('id', decrypt($id))->update(['status' => 0]);
         if ($table) {
             // return response()->json(['message' => 'Record Deleted Successfully']);
             return redirect('/product')->with('success', 'Record Deleted Successfully');
@@ -198,11 +200,11 @@ class ProductController extends Controller
                 $i = 1;
                 foreach ($product as $p) {
                     if ($p['subcategory_id'] == null || $p['subcategory'] == null || $p['category'] == null) {
-                        $html .= "<tr><td>" . $i . "</td><td>" . $p['prod_name'] . "</td><td>" . $p['prod_desc'] . "</td><td>No Subcategory For This Item</td><td>No Category For This Item</td><td><button class='btn btn-info'>Edit</button></td><td><button class='btn btn-danger'>Delete</button></td></tr>";
+                        $html .= "<tr><td>" . $i . "</td><td>" . $p['prod_name'] . "</td><td>" . $p['prod_desc'] . "</td><td>No Subcategory For This Item</td><td>No Category For This Item</td><td><a href=" . url('/product/edit') . '/' . encrypt($p['id']) . "><button class='btn btn-info'>Edit</button></a></td><td><a href=" . url('/product/delete') . '/' . encrypt($p['id']) . "><button class='btn btn-danger'>Delete</button></a></td></tr>";
                     } else {
                         foreach ($p['subcategory'] as $s) {
                             foreach ($p['category'] as $c) {
-                                $html .= "<tr><td>" . $i . "</td><td>" . $p['prod_name'] . "</td><td>" . $p['prod_desc'] . "</td><td>" . $s['subcategory_name'] . "</td><td>" . $c['category_name'] . "</td><td><a href=" . url('/product/edit') . '/' . $p['id'] . "><button class='btn btn-info'>Edit</button></a></td><td><a href=" . url('/product/delete') . '/' . $p['id'] . "><button class='btn btn-danger'>Delete</button></a></td></tr>";
+                                $html .= "<tr><td>" . $i . "</td><td>" . $p['prod_name'] . "</td><td>" . $p['prod_desc'] . "</td><td>" . $s['subcategory_name'] . "</td><td>" . $c['category_name'] . "</td><td><a href=" . url('/product/edit') . '/' . encrypt($p['id']) . "><button class='btn btn-info'>Edit</button></a></td><td><a href=" . url('/product/delete') . '/' . encrypt($p['id']) . "><button class='btn btn-danger'>Delete</button></a></td></tr>";
                             }
                         }
                     }
@@ -223,11 +225,11 @@ class ProductController extends Controller
                 $i = 1;
                 foreach ($product as $p) {
                     if ($p['subcategory_id'] == null || $p['subcategory'] == null || $p['category'] == null) {
-                        $html .= "<tr><td>" . $i . "</td><td>" . $p['prod_name'] . "</td><td>" . $p['prod_desc'] . "</td><td>No Subcategory For This Item</td><td>No Category For This Item</td><td><button class='btn btn-info'>Edit</button></td><td><button class='btn btn-danger'>Delete</button></td></tr>";
+                        $html .= "<tr><td>" . $i . "</td><td>" . $p['prod_name'] . "</td><td>" . $p['prod_desc'] . "</td><td>No Subcategory For This Item</td><td>No Category For This Item</td><td><a href=" . url('/product/edit') . '/' . encrypt($p['id']) . "><button class='btn btn-info'>Edit</button></a></td><td><a href=" . url('/product/delete') . '/' . encrypt($p['id']) . "><button class='btn btn-danger'>Delete</button></a></td></tr>";
                     } else {
                         foreach ($p['subcategory'] as $s) {
                             foreach ($p['category'] as $c) {
-                                $html .= "<tr><td>" . $i . "</td><td>" . $p['prod_name'] . "</td><td>" . $p['prod_desc'] . "</td><td>" . $s['subcategory_name'] . "</td><td>" . $c['category_name'] . "</td><td><a href=" . url('/product/edit') . '/' . $p['id'] . "><button class='btn btn-info'>Edit</button></a></td><td><a href=" . url('/product/delete') . '/' . $p['id'] . "><button class='btn btn-danger'>Delete</button></a></td></tr>";
+                                $html .= "<tr><td>" . $i . "</td><td>" . $p['prod_name'] . "</td><td>" . $p['prod_desc'] . "</td><td>" . $s['subcategory_name'] . "</td><td>" . $c['category_name'] . "</td><td><a href=" . url('/product/edit') . '/' . encrypt($p['id']) . "><button class='btn btn-info'>Edit</button></a></td><td><a href=" . url('/product/delete') . '/' . encrypt($p['id']) . "><button class='btn btn-danger'>Delete</button></a></td></tr>";
                             }
                         }
                     }
@@ -263,7 +265,7 @@ class ProductController extends Controller
     public function editajax(Request $req)
     {
         $id = $req->id;
-        $product = Product::where('id', $id)->get()->toArray();
+        $product = Product::where('id', decrypt($id))->get()->toArray();
         $category = Category::select('category_id', 'category_name')->get()->toArray();
         return view('Product.product-update-ajax', ['category' => $category, 'product' => $product, 'id' => $id]);
     }

@@ -83,10 +83,10 @@ class SubcategoryController extends Controller
         $table = SubCategory::insert($array);
         if ($table) {
             // return response()->json('Record Inserted Successfully');
-            return redirect('/subcategory')->with('success','Record Inserted Successfully');
+            return redirect('/subcategory')->with('success', 'Record Inserted Successfully');
         } else {
             // return response()->json('Record Inserted Failed');
-            return redirect('/subcategory')->with('error','Record Inserted Failed');
+            return redirect('/subcategory')->with('error', 'Record Inserted Failed');
         }
     }
 
@@ -94,10 +94,13 @@ class SubcategoryController extends Controller
     {
         $id = $req->id;
         $prodid = $req->prodid;
+
         $category = Category::select('category_id', 'category_name')->with('subcategory')->where('category_id', $id)->where('status', 1)->get()->toArray();
-        $product = Product::select('subcategory_id')->where('id', $prodid)->get()->toArray();
+
         $selected = "";
         if (isset($prodid)) {
+            $prodid = decrypt($prodid);
+            $product = Product::select('subcategory_id')->where('id', $prodid)->get()->toArray();
             for ($i = 0; $i < count($category[0]['subcategory']); $i++) {
                 if ($product[0]['subcategory_id'] == $category[0]['subcategory'][$i]['subcategory_id']) {
                     $selected = "selected";
@@ -107,15 +110,16 @@ class SubcategoryController extends Controller
             }
         }
         $html = '';
-
-        for ($i = 0; $i < count($category[0]['subcategory']); $i++) {
-            if (isset($prodid)) {
+        if (isset($prodid)) {
+            for ($i = 0; $i < count($category[0]['subcategory']); $i++) {
                 if ($product[0]['subcategory_id'] == $category[0]['subcategory'][$i]['subcategory_id']) {
                     $html .= "<option value=" . $category[0]['subcategory'][$i]['subcategory_id'] . " " . $selected . " >" . $category[0]['subcategory'][$i]['subcategory_name'] . "</option>";
                 } else {
                     $html .= "<option value=" . $category[0]['subcategory'][$i]['subcategory_id'] . ">" . $category[0]['subcategory'][$i]['subcategory_name'] . "</option>";
                 }
-            } else {
+            }
+        } else {
+            for ($i = 0; $i < count($category[0]['subcategory']); $i++) {
                 $html .= "<option value=" . $category[0]['subcategory'][$i]['subcategory_id'] . ">" . $category[0]['subcategory'][$i]['subcategory_name'] . "</option>";
             }
         }
@@ -139,7 +143,7 @@ class SubcategoryController extends Controller
 
     public function edit($id)
     {
-        $id=decrypt($id);
+        $id = decrypt($id);
         $table = SubCategory::with('category')->where("subcategory_id", $id)->where('status', 1)->get()->toArray();
         $url = url("/subcategory/update") . '/' . encrypt($id);
         $resp_data['url'] = $url;
@@ -147,28 +151,28 @@ class SubcategoryController extends Controller
         return view('SubCategory.subcategory-add', $resp_data);
     }
 
-    public function update(Request $req,$id){
-        $id=decrypt($id);
-        $array=$req->all();
+    public function update(Request $req, $id)
+    {
+        $id = decrypt($id);
+        $array = $req->all();
         unset($array['_token']);
         // $array['updated_at']=date('Y-m-d H:i:s');
-        $table=SubCategory::where('subcategory_id',$id)->update($array);
-        if($table){
-            return redirect('/subcategory')->with('success','Record Updated Successfully');
-        }
-        else{
-            return redirect('/subcategory')->with('error','Record Update Failed');
+        $table = SubCategory::where('subcategory_id', $id)->update($array);
+        if ($table) {
+            return redirect('/subcategory')->with('success', 'Record Updated Successfully');
+        } else {
+            return redirect('/subcategory')->with('error', 'Record Update Failed');
         }
     }
 
-    public function delete($id){
-        $id=decrypt($id);
-        $table=SubCategory::where('subcategory_id',$id)->update(['status'=>0]);
-        if($table){
-            return redirect('/subcategory')->with('success','Record Deleted Successfully');
-        }
-        else{
-            return redirect('/subcategory')->with('error','Record Deleted Failed');
+    public function delete($id)
+    {
+        $id = decrypt($id);
+        $table = SubCategory::where('subcategory_id', $id)->update(['status' => 0]);
+        if ($table) {
+            return redirect('/subcategory')->with('success', 'Record Deleted Successfully');
+        } else {
+            return redirect('/subcategory')->with('error', 'Record Deleted Failed');
         }
     }
 }
