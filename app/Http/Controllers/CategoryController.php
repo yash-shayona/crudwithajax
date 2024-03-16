@@ -42,7 +42,7 @@ class CategoryController extends Controller
 
     public function getprodlist($id)
     {
-        $table = Category::with('product')->where('category_id', $id)->get()->toArray();
+        $table = Category::with('product')->where('category_id', decrypt($id))->get()->toArray();
         $resp_data['prodlist'] = $table;
         return view('Category.category-product-list', $resp_data);
     }

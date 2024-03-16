@@ -32,7 +32,7 @@
             ?>
                 <tr>
                     <td><?php echo $i; ?></td>
-                    <td><a href="{{ url('/category/getprodlist/'.$c['category_id']) }}"><?php echo $c['category_name']; ?></a></td>
+                    <td><a href="{{ url('/category/getprodlist/'.encrypt($c['category_id'])) }}"><?php echo $c['category_name']; ?></a></td>
                     <td><a href="{{ url('/category/edit/').'/'.encrypt($c['category_id']) }}"><button class="btn btn-info">Edit</button></a></td>
                     <td><a href="{{ url('/category/delete/').'/'.encrypt($c['category_id']) }}"><button class="btn btn-danger">Delete</button></a></td>
                 </tr>

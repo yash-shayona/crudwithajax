@@ -47,7 +47,7 @@ class SubcategoryController extends Controller
     {
         $id = $req->id;
         $category = Category::select('category_id', 'category_name')->where('status', 1)->get()->toArray();
-        $subcategory = SubCategory::select('subcategory_id', 'subcategory_name', 'category_id')->where('subcategory_id', $id)->where('status', 1)->get()->toArray();
+        $subcategory = SubCategory::select('subcategory_id', 'subcategory_name', 'category_id')->where('subcategory_id', decrypt($id))->where('status', 1)->get()->toArray();
 
         foreach ($category as $key => $value) {
             if (isset($id)) {
@@ -144,7 +144,8 @@ class SubcategoryController extends Controller
     public function edit($id)
     {
         $id = decrypt($id);
-        $table = SubCategory::with('category')->where("subcategory_id", $id)->where('status', 1)->get()->toArray();
+        $table = SubCategory::select('subcategory_id','subcategory_name','category_id')->with('category')->where("subcategory_id", $id)->where('status', 1)->get()->toArray();
+        $table[0]['subcategory_id']=encrypt($table[0]['subcategory_id']);
         $url = url("/subcategory/update") . '/' . encrypt($id);
         $resp_data['url'] = $url;
         $resp_data['subcategory'] = $table;
