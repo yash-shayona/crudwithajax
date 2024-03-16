@@ -17,7 +17,7 @@
 
 
     <div class="categorytable mt-3 container">
-        <table class="table table-bordered text-center">
+        <table class="table table-bordered text-center ajax-table">
             <tr>
                 <th>Category No</th>
                 <th>Category Name</th>
@@ -43,4 +43,19 @@
         </table>
     </div>
 </main>
+
+<script>
+    $(document).ready(function(){
+        $.ajax({
+            url:'{{ url("/ajaxdata") }}',
+            type:'GET',
+            success:function(response){
+                $('.ajax-table').html(response);
+            },
+            error:function(response){
+                $('.ajax-table').html(response);
+            }
+        });
+    });
+</script>
 @include('footer')

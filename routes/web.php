@@ -3,6 +3,7 @@
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SubcategoryController;
+use App\Http\Controllers\TestController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -54,6 +55,7 @@ Route::get('/category/edit/{id}',[CategoryController::class,'edit']);
 Route::post('/category/update/{id}',[CategoryController::class,'update']);
 Route::get('/category/delete/{id}',[CategoryController::class,'delete']);
 Route::get('/category/getprodlist/{id}',[CategoryController::class,'getprodlist']);
+Route::get('/ajaxdata',[CategoryController::class,'ajaxdata']);
 
 Route::get('/subcategory',[SubcategoryController::class,'subcategory']);
 Route::get('/getsubcategory',[SubcategoryController::class,'getsubcategory']);
@@ -61,7 +63,10 @@ Route::get('/subcategory/add',[SubcategoryController::class,'add']);
 Route::get('/getcategory',[SubcategoryController::class,'getcategory']);
 Route::post('/subcategory/save',[SubcategoryController::class,'save']);
 Route::get('/getcattosubcat',[SubcategoryController::class,'getcattosubcat']);
-Route::get('/prodtocat',[SubcategoryController::class,'prodtocat']);
 Route::get('/subcategory/edit/{id}',[SubcategoryController::class,'edit']);
 Route::post('/subcategory/update/{id}',[SubcategoryController::class,'update']);
 Route::get('/subcategory/delete/{id}',[SubcategoryController::class,'delete']);
+
+Route::get('/prodtocat',[TestController::class,'prodtocat']);
+Route::get('/foreach',[TestController::class,'foreach']);
+Route::get('/js',[TestController::class,'js']);

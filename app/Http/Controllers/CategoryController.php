@@ -81,4 +81,18 @@ class CategoryController extends Controller
             return redirect('/category')->with(['error' => 'Record Deleted Failed']);
         }
     }
+
+    public function ajaxdata()
+    {
+        $html = "<table class='table table-bordered text-center ajax-table'><tr><th>Category No</th><th>Category Name</th><th>Edit</th><th>Delete</th></tr></table>";
+        $category = Category::select('category_id', 'category_name')->where('status', 1)->get()->toArray();
+        if ($category) {
+            $i = 1;
+            foreach ($category as $c) {
+                $html .= "<tr><td>" . $i . "</td><td><a href='/category/getprodlist/".encrypt($c['category_id'])."'>" . $c['category_name'] . "</a></td><td><a href='/category/edit/" . encrypt($c['category_id']) . "'><button class='btn btn-info'>Edit</button></a></td><td><a href='/category/delete/" . encrypt($c['category_id']) . "'><button class='btn btn-danger'>Delete</button></a></td></tr>";
+                $i++;
+            }
+        }
+        return response()->json($html);
+    }
 }

@@ -134,13 +134,6 @@ class SubcategoryController extends Controller
         return response()->json($html);
     }
 
-    public function prodtocat()
-    {
-        $prod = Product::with('category')->get()->toArray();
-        echo "<pre>";
-        print_r($prod);
-    }
-
     public function edit($id)
     {
         $id = decrypt($id);

@@ -24,6 +24,7 @@ class ProductController extends Controller
         $total = count($count);
         $resp_data['total'] = $total;
         $resp_data['product'] = $product;
+        $resp_data['active']='btn btn-warning';
         return view("Product.product-list", $resp_data);
     }
 
@@ -120,9 +121,9 @@ class ProductController extends Controller
 
     public function getdata($page)
     {
-
+        
         $resp_data['page'] = $page;
-        $count = Product::all();
+        $count = Product::all()->where('status',1);
         $limit = 5;
         $offset = ($page - 1) * $limit;
         $product = Product::with('category')
@@ -135,6 +136,7 @@ class ProductController extends Controller
         $resp_data['limit'] = $limit;
         $resp_data['product'] = $product;
         $resp_data['total'] = $total;
+        $resp_data['active']='btn btn-secondary';
         $resp_data['total_page'] = ceil($total / $limit);
         return view("Product.product-list", $resp_data);
     }

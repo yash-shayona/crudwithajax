@@ -37,8 +37,8 @@
                     <td><?php echo $p['prod_name']; ?></td>
                     <td><?php echo $p['prod_desc']; ?></td>
                     <td><?php echo $p['category'][0]['category_name']; ?></td>
-                    <td><a href="<?php echo url('/product/page/'.$page.'/edit').'/'.encrypt($p['id']); ?>"><button class="btn btn-info editbtn">Edit</button></a></td>
-                    <td><a href="<?php echo url('/product/page/'.$page.'/delete').'/'.encrypt($p['id']); ?>"><button class="btn btn-danger deletebtn">Delete</button></a></td>
+                    <td><a href="<?php echo url('/product/page/' . $page . '/edit') . '/' . encrypt($p['id']); ?>"><button class="btn btn-info editbtn">Edit</button></a></td>
+                    <td><a href="<?php echo url('/product/page/' . $page . '/delete') . '/' . encrypt($p['id']); ?>"><button class="btn btn-danger deletebtn">Delete</button></a></td>
                     <!-- <td><a href="{{ url('/product/page/'.$page.'/'.'delete/').'/'.encrypt($p['id']) }}"><button class="btn btn-danger" onclick="confirm('Are You Sure Want To Delete ?')">Delete</button></a></td> -->
                 </tr>
             <?php
@@ -53,7 +53,11 @@
                 echo '<a href="/product/page/' . ($page - 1) . '"><button class="btn btn-warning mx-1">Prev</button></a>';
             }
             for ($i = 1; $i <= $total_page; $i++) {
-                echo '<a href="/product/page/' . $i . '"><button class="btn btn-warning mx-1">' . $i . '</button></a>';
+                if ($i == $page) {
+                    echo '<a href="/product/page/' . $i . '"><button class="'.$active.' mx-1">' . $i . '</button></a>';
+                } else {
+                    echo '<a href="/product/page/' . $i . '"><button class="btn btn-warning mx-1">' . $i . '</button></a>';
+                }
             }
             if ($page < $total_page) {
                 echo '<a href="/product/page/' . ($page + 1) . '"><button class="btn btn-warning mx-1">Next</button></a>';
