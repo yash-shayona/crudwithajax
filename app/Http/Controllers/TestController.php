@@ -21,9 +21,10 @@ class TestController extends Controller
         foreach ($prod as $v) {
             foreach ($v as $key => $value) {
                 // echo $value;
-                echo $key . ':' . $value.'  ';
+                echo '['.$key.']->' . $value.'  ';
+                echo "<br>";
             }
-            echo "<br>";
+            echo "<br><br>";
         }
     }
 
