@@ -1,5 +1,6 @@
-@include('header')
+@extends('default')
 
+@section('content')
 <main>
     <div class="container-fluid mt-5">
         <div class="productform">
@@ -27,5 +28,4 @@
         </div>
     </div>
 </main>
-
-@include('footer')
+@endsection

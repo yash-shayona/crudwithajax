@@ -11,25 +11,56 @@ class SubcategoryController extends Controller
 {
     public function subcategory()
     {
-        return view('SubCategory.sub-category-list');
+        $resp_data['title']='SubCategory';
+        return view('SubCategory.sub-category-list',$resp_data);
     }
 
-    public function getsubcategory()
+    public function getsubcategory(Request $req)
     {
         $html = '';
-        $subcategory = SubCategory::select('subcategory_id', 'subcategory_name', 'category_id')->with('category')->where('status', 1)->get()->toArray();
-        if ($subcategory) {
-            $i = 1;
-            foreach ($subcategory as $key => $value) {
-                foreach ($value['category'] as $k => $v) {
-                    $html .= "<tr><td>" . $i . "</td><td>" . $value['subcategory_name'] . "</td><td>" . $v['category_name'] . "</td><td><a href=" . url('/subcategory/edit') . '/' . encrypt($value['subcategory_id']) . "><button class='btn btn-info'>Edit</button></a></td><td><a href=" . url('/subcategory/delete') . '/' . encrypt($value['subcategory_id']) . "><button class='btn btn-danger'>Delete</button></a></td></tr>";
+        $limit = 5;
+        $page = $req->page;
+        $offset = ($page - 1) * $limit;
+        if ($page) {
+            $i=($page-1)*$limit+1;
+            $subcategory = SubCategory::select('subcategory_id', 'subcategory_name', 'category_id')
+                ->with('category')
+                ->offset($offset)
+                ->limit($limit)
+                ->where('status', 1)
+                ->get()
+                ->toArray();
+            if ($subcategory) {
+                foreach ($subcategory as $key => $value) {
+                    foreach ($value['category'] as $k => $v) {
+                        $html .= "<tr><td>" . $i++ . "</td><td>" . $value['subcategory_name'] . "</td><td>" . $v['category_name'] . "</td><td><a href=" . url('/subcategory/edit') . '/' . encrypt($value['subcategory_id']) . "><button class='btn btn-info'>Edit</button></a></td><td><a href=" . url('/subcategory/delete') . '/' . encrypt($value['subcategory_id']) . "><button class='btn btn-danger'>Delete</button></a></td></tr>";
+                    }
                 }
-                $i++;
+            } else {
+                $html .= "<tr><td colspan='5' class='text-center'>No Records Found...</td></tr>";
             }
+            return response()->json($html);
         } else {
-            $html .= "<tr><td colspan='5' class='text-center'>No Records Found...</td></tr>";
+            $subcategory = SubCategory::select('subcategory_id', 'subcategory_name', 'category_id')
+                ->with('category')
+                ->offset(0)
+                ->limit(5)
+                ->where('status', 1)
+                ->get()
+                ->toArray();
+            if ($subcategory) {
+                $i = 1;
+                foreach ($subcategory as $key => $value) {
+                    foreach ($value['category'] as $k => $v) {
+                        $html .= "<tr><td>" . $i++ . "</td><td>" . $value['subcategory_name'] . "</td><td>" . $v['category_name'] . "</td><td><a href=" . url('/subcategory/edit') . '/' . encrypt($value['subcategory_id']) . "><button class='btn btn-info'>Edit</button></a></td><td><a href=" . url('/subcategory/delete') . '/' . encrypt($value['subcategory_id']) . "><button class='btn btn-danger'>Delete</button></a></td></tr>";
+                    }
+                    // $i++;
+                }
+            } else {
+                $html .= "<tr><td colspan='5' class='text-center'>No Records Found...</td></tr>";
+            }
+            return response()->json($html);
         }
-        return response()->json($html);
     }
 
     // public function add()
@@ -45,9 +76,11 @@ class SubcategoryController extends Controller
 
     public function getcategory(Request $req)
     {
-        $id = $req->id;
         $category = Category::select('category_id', 'category_name')->where('status', 1)->get()->toArray();
-        $subcategory = SubCategory::select('subcategory_id', 'subcategory_name', 'category_id')->where('subcategory_id', decrypt($id))->where('status', 1)->get()->toArray();
+        if(isset($req->id)){
+            $id = $req->id;
+            $subcategory = SubCategory::select('subcategory_id', 'subcategory_name', 'category_id')->where('subcategory_id', decrypt($id))->where('status', 1)->get()->toArray();
+        }
 
         foreach ($category as $key => $value) {
             if (isset($id)) {
@@ -137,8 +170,8 @@ class SubcategoryController extends Controller
     public function edit($id)
     {
         $id = decrypt($id);
-        $table = SubCategory::select('subcategory_id','subcategory_name','category_id')->with('category')->where("subcategory_id", $id)->where('status', 1)->get()->toArray();
-        $table[0]['subcategory_id']=encrypt($table[0]['subcategory_id']);
+        $table = SubCategory::select('subcategory_id', 'subcategory_name', 'category_id')->with('category')->where("subcategory_id", $id)->where('status', 1)->get()->toArray();
+        $table[0]['subcategory_id'] = encrypt($table[0]['subcategory_id']);
         $url = url("/subcategory/update") . '/' . encrypt($id);
         $resp_data['url'] = $url;
         $resp_data['subcategory'] = $table;
@@ -168,5 +201,50 @@ class SubcategoryController extends Controller
         } else {
             return redirect('/subcategory')->with('error', 'Record Deleted Failed');
         }
+    }
+
+    public function pagination(Request $req)
+    {
+        $html = "";
+        if ($req->page) {
+            $page = $req->page;
+            $subcategory = SubCategory::select('subcategory_id', 'subcategory_name', 'category_id')->with('category')->where('status', 1)->get()->toArray();
+
+            $total_records = count($subcategory);
+            $limit = 5;
+            $active = "btn btn-secondary";
+            $total_page = ceil($total_records / $limit);
+            if ($page >= 2) {
+                $html .= "<button class='btn btn-warning pgbtn' id='" . ($page - 1) . "'>Prev</button>";
+            }
+            for ($i = 1; $i <= $total_page; $i++) {
+                if ($i == $page) {
+                    $html .= "<button class='" . $active . " pgbtn' id='" . $i . "' style='margin-left:10px;'>" . $i . "</button>";
+                } else {
+                    $html .= "<button class='btn btn-warning pgbtn' id='" . $i . "' style='margin-left:10px;'>" . $i . "</button>";
+                }
+            }
+            if ($page < $total_page) {
+                $html .= "<button class='btn btn-warning pgbtn' id='" . ($page + 1) . "' style='margin-left:10px;'>Next</button>";
+            }
+        } else {
+            // $page = $req->page;
+            $subcategory = SubCategory::select('subcategory_id', 'subcategory_name', 'category_id')->with('category')->where('status', 1)->get()->toArray();
+
+            $total_records = count($subcategory);
+            $limit = 5;
+            $page = 1;
+            $total_page = ceil($total_records / $limit);
+            if ($page >= 2) {
+                $html .= "<button class='btn btn-warning pgbtn' id='" . ($page - 1) . "'>Prev</button>";
+            }
+            for ($i = 1; $i <= $total_page; $i++) {
+                $html .= "<button class='btn btn-warning pgbtn' id='" . $i . "' style='margin-left:10px;'>" . $i . "</button>";
+            }
+            if ($page < $total_page) {
+                $html .= "<button class='btn btn-warning pgbtn' id='" . ($page + 1) . "' style='margin-left:10px;'>Next</button>";
+            }
+        }
+        return response()->json($html);
     }
 }

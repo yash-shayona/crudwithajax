@@ -1,4 +1,6 @@
-@include('header')
+@extends('default')
+
+@section('content')
 <main>
     <div class="container-fluid mt-5">
         <div class="productform">
@@ -36,8 +38,9 @@
         </div>
     </div>
 </main>
+@endsection
 
-
+@section('custom_script')
 <script>
     $(document).ready(function() {
         var id = $('#id').val();
@@ -70,4 +73,4 @@
     }
     });
 </script>
-@include('footer')
+@endsection

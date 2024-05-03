@@ -1,5 +1,5 @@
-@include('header')
-
+@extends('default')
+@section('content')
 <div class="alert alert-success message" style="display: none;">
 
 </div>
@@ -72,7 +72,9 @@
         </div>
     </div>
 </main>
+@endsection
 
+@section('custom_script')
 <script>
     $(document).ready(function() {
         $('#proddataform').submit(function(event) {
@@ -124,5 +126,10 @@
         })
     });
 </script>
+@endsection
 
-@include('footer')
+<!-- 
+@if($errors->has('field name which is write in cotroller validate function'))
+<div class="alert alert-danger">{{ $errors->first('name') }}</div>
+@endif 
+-->

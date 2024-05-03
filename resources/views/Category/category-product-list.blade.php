@@ -1,5 +1,6 @@
-@include('header')
+@extends('default')
 
+@section('content')
 <main>
 
     @if(session()->has('success'))
@@ -41,4 +42,4 @@
         </table>
     </div>
 </main>
-@include('footer')
+@endsection

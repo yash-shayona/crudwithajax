@@ -1,5 +1,6 @@
-@include('header')
+@extends('default')
 
+@section('content')
 <div class="alert alert-success message" style="display: none;">
 
 </div>
@@ -8,10 +9,11 @@
 
     <div class="container-fluid mt-5">
         <div class="productform">
-            <form id="proddataform" enctype="multipart/form-data">
+            <form id="proddataform" enctype="multipart/form-data" action="{{ url('/product/update/').'/'.$id }}" method="post">
                 @csrf
+                <input type="hidden" name="id" id="id" value="{{ $id }}">
+                <input type="hidden" name="page" id="page" value="{{ $page }}">
                 <table>
-                    <input type="hidden" name="id" id="id" value="{{ $id }}">
                     <tr>
                         <td>
                             <label for="prod_name">Product Name</label>
@@ -73,35 +75,38 @@
         </div>
     </div>
 </main>
+@endsection
 
+@section('custom_script')
 <script>
     $(document).ready(function() {
-        $('#proddataform').submit(function(event) {
-            event.preventDefault();
+        // $('#proddataform').submit(function(event) {
+        //     event.preventDefault();
 
-            var form = $('#proddataform')[0];
-            var data = new FormData(form);
+        //     var form = $('#proddataform')[0];
+        //     var data = new FormData(form);
 
-            var id = $('#id').val();
-            $('.updatebtn').prop('disabled', true);
+        //     var id = $('#id').val();
+        //     var page = $('#page').val();
+        //     $('.updatebtn').prop('disabled', true);
 
-            $.ajax({
-                url: '{{ url("/product/update") }}' + '/' + id,
-                type: "POST",
-                data: data,
-                processData: false,
-                contentType: false,
-                success: function(response) {
-                    $('.message').text(response.message).css('display', 'block');
-                    window.setTimeout(function() {
-                        window.open('/product', '_SELF');
-                    }, 2000);
-                },
-                error: function(e) {
-                    $('.message').text(response.message).css('display', 'block').attr('class', 'alert alert-danger');
-                }
-            })
-        });
+        //     $.ajax({
+        //         url: '{{ url("/product/update") }}' + '/' + id,
+        //         type: "POST",
+        //         data: data,
+        //         processData: false,
+        //         contentType: false,
+        //         success: function(response) {
+        //             $('.message').text(response.message).css('display', 'block');
+        //             window.setTimeout(function() {
+        //                 window.open('/product?page='+page+'', '_SELF');
+        //             }, 2000);
+        //         },
+        //         error: function(e) {
+        //             $('.message').text(response.message).css('display', 'block').attr('class', 'alert alert-danger');
+        //         }
+        //     })
+        // });
 
         if ($('#category option:selected').each) {
             $('#category option:selected').each(function() {
@@ -174,5 +179,4 @@
         }
     });
 </script>
-
-@include('footer')
+@endsection

@@ -1,4 +1,6 @@
-@include('header')
+@extends('default')
+
+@section('content')
 <div id="message" class="alert alert-success" style="display: none;">
 </div>
 <main>
@@ -37,8 +39,9 @@
         </div>
     </div>
 </main>
+@endsection
 
-
+@section('custom_script')
 <script>
     $(document).ready(function() {
         $.ajax({
@@ -78,4 +81,4 @@
         })
     });
 </script>
-@include('footer')
+@endsection

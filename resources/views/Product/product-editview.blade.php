@@ -1,4 +1,6 @@
-@include('header')
+@extends('default')
+
+@section('content')
 <meta name="csrf-token" content="{{ csrf_token() }}" />
 <main>
 <div class="message">
@@ -61,7 +63,9 @@
         </div>
     </div>
 </main>
+@endsection
 
+@section('custom_script')
 <script>
     $(document).ready(function() {
         var path=window.location.pathname;
@@ -97,5 +101,4 @@
         });
     });
 </script>
-
-@include('footer')
+@endsection

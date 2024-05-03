@@ -1,11 +1,13 @@
-@include('header')
+@extends('default')
 
+@section('content')
 <main>
-    
+
     <div class="container-fluid mt-5">
         <div class="productform">
             <form action="{{ $url }}" method="post" enctype="multipart/form-data">
                 @csrf
+                <input type="hidden" id="id" value="@if(isset($product[0]['id'])){{ encrypt($product[0]['id']) }}@else""@endif">
                 <table>
                     <tr>
                         <td>
@@ -41,7 +43,7 @@
                                 @else
                                 <option value="{{ $c['category_id'] }}">{{ $c['category_name'] }}</option>
                                 @endif
-                                
+
                                 @endforeach
                             </select>@error('category')
                             <div class="alert alert-danger">{{ $message }}</div>
@@ -55,7 +57,7 @@
                         <td>
                             <select name="subcategory_id" id="subcategory">
                                 <option value="">Select</option>
-                                @foreach($subcategory as $s)
+                                <!-- @foreach($subcategory as $s)
                                 @if(isset($product[0]['category_id']))
                                 @foreach($product as $p)
                                 <option value="{{ $s['subcategory_id'] }}" @if($p['category_id']==$s['subcategory_id']) {{ "selected" }} @endif>{{ $s['subcategory_name'] }}</option>
@@ -64,7 +66,7 @@
                                 <option value="{{ $s['subcategory_id'] }}">{{ $s['subcategory_name'] }}</option>
                                 @endif
                                 
-                                @endforeach
+                                @endforeach -->
                             </select>@error('category')
                             <div class="alert alert-danger">{{ $message }}</div>
                             @enderror
@@ -80,5 +82,85 @@
         </div>
     </div>
 </main>
+@endsection
 
-@include('footer')
+@section('custom_script')
+<script>
+    $(document).ready(function() {
+        var prodid = $('#id').val();
+        if (prodid) {
+            if ($('#category option:selected').each) {
+                $('#category option:selected').each(function() {
+                    var id = this.value;
+
+                    $.ajax({
+                        url: '{{ url("/getcattosubcat") }}',
+                        type: 'GET',
+                        data: {
+                            id,
+                            prodid
+                        },
+                        success: function(response) {
+                            if (response.length > 0) {
+                                $('#subcategory').html(response);
+                            } else {
+                                $('#subcategory').html(`<option value="">No SubCategory Available...</option>`);
+                            }
+                        },
+                        error: function(e) {
+                            console.log(e.responseText);
+                        }
+                    });
+                });
+
+                $('#category').on('change', function() {
+                    var id = this.value;
+                    var prodid = $('#id').val();
+                    $.ajax({
+                        url: '{{ url("/getcattosubcat") }}',
+                        type: 'GET',
+                        data: {
+                            id,
+                            prodid
+                        },
+                        success: function(response) {
+                            if (response.length > 0) {
+                                $('#subcategory').html(response);
+                            } else {
+                                $('#subcategory').html(`<option value="">No SubCategory Available...</option>`);
+                            }
+                        },
+                        error: function(e) {
+                            console.log(e.responseText);
+                        }
+                    });
+                })
+
+            }
+        } else {
+            $('#category').on('change', function() {
+                var id = this.value;
+                $.ajax({
+                    url: '{{ url("/getcattosubcat") }}',
+                    type: 'GET',
+                    data: {
+                        id
+                    },
+                    success: function(response) {
+                        if (response.length > 0) {
+                            $('#subcategory').html(response);
+                        } else {
+                            $('#subcategory').html(`<option value="">No SubCategory Available...</option>`);
+                        }
+
+                    },
+                    error: function(e) {
+                        console.log(e.responseText);
+                    }
+                });
+            })
+
+        }
+    });
+</script>
+@endsection

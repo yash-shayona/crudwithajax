@@ -1,5 +1,7 @@
-@include('header')
+@extends('default')
+@section('title', $title ?? '')
 
+@section('content')
 <main>
 
     @if(session()->has('success'))
@@ -41,21 +43,77 @@
             }
             ?>
         </table>
+        <div class="pagination">
+
+        </div>
     </div>
 </main>
+@endsection
 
+@section('custom_script')
 <script>
-    $(document).ready(function(){
+    $(document).ready(function() {
         $.ajax({
-            url:'{{ url("/ajaxdata") }}',
-            type:'GET',
-            success:function(response){
+            url: '{{ url("/ajaxdata") }}',
+            type: 'GET',
+            success: function(response) {
                 $('.ajax-table').html(response);
             },
-            error:function(response){
+            error: function(response) {
                 $('.ajax-table').html(response);
             }
         });
+
+            $('.pagination').on('click', '.pgbtn', function() {
+                var id = this.id;
+                $.ajax({
+                    url: '{{ url("/ajaxdata") }}',
+                    type: 'GET',
+                    data: {
+                        'page': id
+                    },
+                    success: function(response) {
+                        if (response.length > 0) {
+                            $('.ajax-table').html(response);
+                        } else {
+                            $('.ajax-table').html(response);
+                        }
+                    },
+                    error: function(e) {
+                        console.log(e.responseText);
+                    }
+                });
+            });
+
+
+        $.ajax({
+            url: '{{ url("/catpagination") }}',
+            type: 'GET',
+            success: function(response) {
+                $('.pagination').html(response);
+            },
+            error: function(e) {
+                $('.pagination').html(e.responseText);
+            }
+        });
+
+
+        $('.pagination').on('click', '.pgbtn', function() {
+            var id = this.id;
+            $.ajax({
+                url: '{{ url("/catpagination") }}',
+                type: "GET",
+                data: {
+                    'page': id
+                },
+                success: function(response) {
+                    $('.pagination').html(response);
+                },
+                error: function(response) {
+                    $('.pagination').html(response);
+                }
+            });
+        });
     });
 </script>
-@include('footer')
+@endsection
